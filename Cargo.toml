@@ -1,0 +1,9 @@
+[package]
+name = "shitsploit"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+memory_utils = "0.1.18"
+device_query = "0.2"
+once_cell = "1.19"
