@@ -28,6 +28,7 @@ pub static offsets: Lazy<HashMap<String, usize>> = Lazy::new(|| {
         ("FogColor".to_string(), 0x104),
         ("CanCollide".to_string(), 0x313),
         ("Team".to_string(), 0x258),
-        ("JumpPower".to_string(), 0x1B8)
+        ("JumpPower".to_string(), 0x1B8),
+        ("PlaceId".to_string(), 0x1A0)
     ])
 });

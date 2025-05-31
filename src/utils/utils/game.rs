@@ -95,6 +95,9 @@ impl<'a> Game<'a> {
         let player_userid = self.process.read_memory::<u32>(localplayer + offsets["UserId"]).unwrap_or_default();
 
         let mut character = self.process.read_memory::<usize>(localplayer + offsets["ModelInstance"] ).unwrap();
+        while character == 0 {
+            character = self.process.read_memory::<usize>(localplayer + offsets["ModelInstance"]).unwrap();
+        }
 
 
         let character_children = self.utils.getchildren(character);
