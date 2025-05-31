@@ -14,6 +14,16 @@ pub struct Player<'a> {
 }
 
 impl<'a> Player<'a> {
+    pub fn default(utils: &'a Utils<'a>,) -> Self {
+        Player {
+            Userid: 0,
+            Username: "".to_string(),
+            utils,
+            CharacterAddr: 0,
+            PlayerAddr: 0,
+            Character: HashMap::new()
+        }
+    }
     pub fn health(&self) -> f32 {
         let humanoid = self.Character.get("Humanoid").unwrap();
         let health = self.utils.read_memory::<f32>(*humanoid + offsets["Health"]).unwrap();
@@ -56,16 +66,20 @@ impl<'a> Player<'a> {
     }
 
     pub fn get_position(&self, part: &str) -> Vector3 {
-        let part = self.Character[part];
-        let primitive = self.utils.read_memory::<usize>(part + offsets["Primitive"]).unwrap();
+        let part = self.Character.get(part).unwrap_or(&0);
+        if *part == 0 { return Vector3::zero() }
+
+        let primitive = self.utils.read_memory::<usize>(*part + offsets["Primitive"]).unwrap();
         if primitive == 0 { return Vector3::zero() }
 
         self.utils.read_memory::<Vector3>(primitive + offsets["Position"]).unwrap()
     }
 
     pub fn set_position(&mut self, part: &str, position: Vector3) {
-        let part = self.Character[part];
-        let primitive = self.utils.read_memory::<usize>(part + offsets["Primitive"]).unwrap();
+        let part = self.Character.get(part).unwrap_or(&0);
+        if *part == 0 { return }
+
+        let primitive = self.utils.read_memory::<usize>(*part + offsets["Primitive"]).unwrap();
         if primitive == 0 { return; }
 
         for _ in  0..4000 {
@@ -74,16 +88,20 @@ impl<'a> Player<'a> {
     }
 
     pub fn get_velocity(&self, part: &str) -> Vector3 {
-        let part = self.Character[part];
-        let primitive = self.utils.read_memory::<usize>(part + offsets["Primitive"]).unwrap();
+        let part = self.Character.get(part).unwrap_or(&0);
+        if *part == 0 { return Vector3::zero() }
+
+        let primitive = self.utils.read_memory::<usize>(*part + offsets["Primitive"]).unwrap();
         if primitive == 0 { return Vector3::zero() }
 
         self.utils.read_memory::<Vector3>(primitive + offsets["Velocity"]).unwrap()
     }
 
     pub fn set_velocity(&mut self, part: &str, velocity: Vector3) {
-        let part = self.Character[part];
-        let primitive = self.utils.read_memory::<usize>(part + offsets["Primitive"]).unwrap();
+        let part = self.Character.get(part).unwrap_or(&0);
+        if *part == 0 { return }
+
+        let primitive = self.utils.read_memory::<usize>(*part + offsets["Primitive"]).unwrap();
         if primitive == 0 { return; }
 
         for _ in  0..4000 {
@@ -93,18 +111,24 @@ impl<'a> Player<'a> {
     }
 
     pub fn move_direction(&self) -> Vector3 {
-        self.utils.read_memory::<Vector3>(self.Character["Humanoid"] + offsets["MoveDirection"]).unwrap()
+        let humanoid = self.Character.get("Humanoid").unwrap_or(&0);
+        if *humanoid == 0 { return Vector3::zero() }
+
+        self.utils.read_memory::<Vector3>(humanoid + offsets["MoveDirection"]).unwrap()
     }
 
     pub fn change_walkspeed(&self, new_walk_speed: f32) {
-        let humanoid = self.Character["Humanoid"];
-        self.utils.write_memory::<f32>(humanoid + offsets["WalkSpeed"], &new_walk_speed).unwrap();
-        self.utils.write_memory::<f32>(humanoid + offsets["WalkSpeedCheck"], &new_walk_speed).unwrap();
+        let humanoid = self.Character.get("Humanoid").unwrap_or(&0);
+        if *humanoid == 0 { return }
+
+        self.utils.write_memory::<f32>(*humanoid + offsets["WalkSpeed"], &new_walk_speed).unwrap();
+        self.utils.write_memory::<f32>(*humanoid + offsets["WalkSpeedCheck"], &new_walk_speed).unwrap();
     }
 
     pub fn change_jumppower(&self, new_walk_speed: f32) {
-        let humanoid = self.Character["Humanoid"];
-        self.utils.write_memory::<f32>(humanoid + offsets["JumpPower"], &new_walk_speed).unwrap();
+        let humanoid = self.Character.get("Humanoid").unwrap_or(&0);
+        if *humanoid == 0 { return }
+        self.utils.write_memory::<f32>(*humanoid + offsets["JumpPower"], &new_walk_speed).unwrap();
     }
 
 }

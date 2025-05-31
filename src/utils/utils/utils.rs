@@ -53,7 +53,9 @@ impl<'a> Utils<'a> {
         let mut return_vec: Vec<usize> = Vec::new();
 
         let start = self.process.read_memory::<usize>(address + offsets["Children"]).unwrap(); // Children
-        let end = self.process.read_memory::<usize>(start + offsets["ChildrenEnd"]).unwrap(); // ChildrenEnd
+        let end = self.process.read_memory::<usize>(start + offsets["ChildrenEnd"]).unwrap_or(0); // ChildrenEnd
+
+        if end == 0 { return return_vec; }
 
         let mut current = self.process.read_memory::<usize>(start).unwrap();
 

@@ -92,11 +92,15 @@ impl<'a> Game<'a> {
         let localplayer = self.process.read_memory::<usize>(players_addr + offsets["LocalPlayer"]).unwrap();
 
         let player_name = self.utils.get_name(localplayer).unwrap_or_default();
-        let player_userid = self.process.read_memory::<u32>(localplayer + offsets["UserId"]).unwrap_or_default();
+        let mut player_userid = self.process.read_memory::<u32>(localplayer + offsets["UserId"]).unwrap_or(0);
 
-        let mut character = self.process.read_memory::<usize>(localplayer + offsets["ModelInstance"] ).unwrap();
-        while character == 0 {
-            character = self.process.read_memory::<usize>(localplayer + offsets["ModelInstance"]).unwrap();
+        if player_userid == 0 {
+            return Player::default(self.utils)
+        }
+
+        let mut character = self.process.read_memory::<usize>(localplayer + offsets["ModelInstance"] ).unwrap_or(0);
+        if character == 0 {
+            return Player::default(self.utils)
         }
 
 
