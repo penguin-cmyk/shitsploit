@@ -1,6 +1,6 @@
 use std::collections::HashMap;
 use once_cell::sync::Lazy;
-
+#[allow(non_upper_case_globals)]
 pub static offsets: Lazy<HashMap<String, usize>> = Lazy::new(|| {
     HashMap::from([
         ("Primitive".to_string(), 0x178),

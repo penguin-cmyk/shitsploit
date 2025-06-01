@@ -13,7 +13,21 @@ pub struct Player<'a> {
     pub utils: &'a Utils<'a>,
 }
 
+
+#[allow(dead_code)]
+
 impl<'a> Player<'a> {
+    pub fn clone(&self) -> Player<'a> {
+        Player {
+            Username: self.Username.clone(),
+            Userid: self.Userid.clone(),
+            Character: self.Character.clone(),
+            CharacterAddr: self.CharacterAddr.clone(),
+            PlayerAddr: self.PlayerAddr.clone(),
+            utils: self.utils
+        }
+    }
+
     pub fn default(utils: &'a Utils<'a>,) -> Self {
         Player {
             Userid: 0,

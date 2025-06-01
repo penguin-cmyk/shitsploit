@@ -1,15 +1,15 @@
-use std::collections::HashMap;
 use std::io::Error;
 use memory_utils::process::Process;
 use crate::offsets;
 pub struct Utils<'a> {
     pub process: &'a Process,
 }
-
+#[allow(dead_code)]
 impl<'a> Utils<'a> {
     pub fn new(process: &'a Process) -> Self { Self { process } }
 
     pub fn read_string(&self, address: usize) -> String {
+        #[allow(unused)]
         let mut character = 0;
         let mut offset = 0;
 
@@ -84,12 +84,22 @@ impl<'a> Utils<'a> {
     pub fn find_first_child(&self, address: usize, name_to_find: String) -> usize {
         let children = self.getchildren(address);
         for child in children {
-            let name = self.get_name(child).unwrap();
+            let name = self.get_name(child).unwrap_or_default();
             if name_to_find == name {
                 return child;
             }
         }
         0
+    }
+
+    pub fn walkspeed(&self, character: usize, speed: f32) {
+        if character == 0 { return }
+
+        let humanoid = self.find_first_child(character, "Humanoid".to_string());
+        if humanoid == 0 { return }
+
+        self.process.write_memory::<f32>(humanoid + offsets["WalkSpeed"], &speed).unwrap_or(());
+        self.process.write_memory::<f32>(humanoid + offsets["WalkSpeedCheck"], &speed).unwrap_or(());
     }
 
 

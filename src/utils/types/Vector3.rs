@@ -1,12 +1,14 @@
 use std::ops::{Add, Mul, Sub};
 
 #[derive(Copy, Clone, Debug)]
+#[allow(non_snake_case)]
+
 pub struct Vector3 {
     pub x: f32,
     pub y: f32,
     pub z: f32,
 }
-
+#[allow(dead_code)]
 impl Vector3 {
     pub fn zero() -> Vector3 { Vector3{ x: 0.0, y: 0.0, z: 0.0 } }
     pub fn new(x: f32, y: f32, z: f32) -> Self { Vector3 { x, y, z } }

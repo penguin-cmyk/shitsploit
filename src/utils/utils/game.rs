@@ -14,6 +14,7 @@ pub struct Game<'a> {
     pub datamodel: usize,
 }
 
+#[allow(dead_code)]
 
 impl<'a> Game<'a> {
     pub fn get_datamodel() -> (Process, usize , usize) {
@@ -44,7 +45,7 @@ impl<'a> Game<'a> {
     }
 
     pub fn get_service(&self, name: &str) -> usize {
-         self.utils.find_first_child(self.datamodel, name.to_string())
+        self.utils.find_first_child(self.datamodel, name.to_string())
     }
 
     pub fn view(&self, camera: usize, humanoid: usize) {
@@ -86,19 +87,26 @@ impl<'a> Game<'a> {
         players
     }
 
+    pub fn get_character(&self) -> usize {
+        let players_addr = self.utils.find_first_child(self.datamodel, "Players".to_string());
+        let localplayer = self.process.read_memory::<usize>(players_addr + offsets["LocalPlayer"]).unwrap();
+
+        let character = self.process.read_memory::<usize>(localplayer + offsets["ModelInstance"] ).unwrap_or(0);
+        character
+    }
 
     pub fn get_localplayer(&self) -> Player {
         let players_addr = self.utils.find_first_child(self.datamodel, "Players".to_string());
         let localplayer = self.process.read_memory::<usize>(players_addr + offsets["LocalPlayer"]).unwrap();
 
         let player_name = self.utils.get_name(localplayer).unwrap_or_default();
-        let mut player_userid = self.process.read_memory::<u32>(localplayer + offsets["UserId"]).unwrap_or(0);
+        let player_userid = self.process.read_memory::<u32>(localplayer + offsets["UserId"]).unwrap_or(0);
 
         if player_userid == 0 {
             return Player::default(self.utils)
         }
 
-        let mut character = self.process.read_memory::<usize>(localplayer + offsets["ModelInstance"] ).unwrap_or(0);
+        let character = self.process.read_memory::<usize>(localplayer + offsets["ModelInstance"] ).unwrap_or(0);
         if character == 0 {
             return Player::default(self.utils)
         }
