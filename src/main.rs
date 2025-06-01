@@ -1,79 +1,36 @@
+mod classes;
+mod offsets;
 mod utils;
 
-use once_cell::sync::Lazy;
-use std::{
-    sync::Mutex,
-    thread::spawn
-};
-
-use utils::utils::game::*;
-use utils::utils::utils::*;
-use utils::offsets::offsets::offsets;
-use device_query::{DeviceQuery, DeviceState, Keycode};
-use memory_utils::process::Process;
-
-#[allow(non_upper_case_globals)]
-static character: Lazy<Mutex<usize>> = Lazy::new(|| Mutex::new(0));
-#[allow(non_upper_case_globals)]
-static stop_thread: Lazy<Mutex<bool>> = Lazy::new(|| Mutex::new(false));
-#[allow(non_upper_case_globals)]
-static process: Lazy<Process> = Lazy::new(|| Process::new(Process::pid("RobloxPlayerBeta.exe").unwrap()));
-
-#[allow(dead_code)]
-fn is_key_down(key: Keycode) -> bool {
-    DeviceState::new().get_keys().contains(&key)
-}
-
-
-fn new_game()   {
-    let _thread = spawn( move || unsafe {
-        let mut proc = process.clone();
-        let (real_dm, _base_address) = Game::get_datamodel();
-        let utils = Utils::new();
-        let _game = Game::new(&utils, real_dm);
-
-        while !*stop_thread.lock().unwrap() {
-            let char = character.lock().unwrap().clone();
-            if char == 0 { continue }
-
-            utils.walkspeed(char, 70.0);
-        }
-    });
-
-}
-
+use utils::cheat::rbx;
+use crate::classes::globals::globals::*;
+use crate::offsets::offsets::*;
 fn main() {
-    let (old_dm, base_address) = Game::get_datamodel();
-    let mut old_placeid = process.read_memory::<usize>( old_dm + offsets["PlaceId"] ).unwrap();
+    let (real_dm, fake_dm) = rbx::datamodel();
+    println!("FDm->RDm: {:#X} -> {:#X}", fake_dm, real_dm);
 
-    println!("Datamodel: {:#X}\nBase address: {:#X}\nPlaceId: {}", old_dm, base_address, old_placeid);
-
-    new_game();
+    let mut old_placeid = process.read_memory::<usize>( real_dm + offsets.PlaceId ).unwrap();
 
     loop {
-        let (real_dm, _base_address) = Game::get_datamodel();
-        let place_id = process.read_memory::<usize>(real_dm + offsets["PlaceId"]).unwrap();
-
-        // if place_id == 0 { continue }
-
-        let utils = Utils::new();
-        let game = Game::new(&utils, real_dm);
+        let (real_dm, fake_dm) = rbx::datamodel();
+        let place_id = process.read_memory::<usize>( real_dm + offsets.PlaceId ).unwrap();
 
         if place_id != old_placeid {
-            println!("Place changed: {} -> {}\nDatamodel: {:#X} -> {:#X}", old_placeid, place_id, old_dm, real_dm);
+            println!("{} -> {}", old_placeid, place_id);
+            println!("FDm->RDm: {:#X} -> {:#X}", fake_dm, real_dm);
             old_placeid = place_id;
-
-            {
-                let mut stop = stop_thread.lock().unwrap();
-                *stop = true;
-                *stop = false;
-            }
-
-            new_game();
         }
 
-        let mut char = character.lock().unwrap();
-        *char = game.get_character();
+        if place_id == 0 { continue; }
+        let mut game_loaded = loaded.lock().unwrap();
+        let player = rbx::GetLocalPlayer();
+        {
+            if player.character == 0 { continue }
+            let health = player.health();
+            *game_loaded = (health != -100.0)
+        }
 
+        if !(*game_loaded) { continue }
+        println!("Health: {}", player.health());
     }
 }

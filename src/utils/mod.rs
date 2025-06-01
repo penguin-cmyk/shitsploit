@@ -1,17 +1,4 @@
-
-pub mod utils {
-    pub mod game;
-    pub mod utils;
+pub mod cheat {
+    pub mod rbx;
+    pub mod mem;
 }
-pub mod offsets {
-    pub mod offsets;
-}
-#[allow(non_snake_case)]
-pub mod types {
-    pub mod Vector2;
-    pub mod Player;
-    pub mod Vector3;
-    pub mod Color3;
-}
-
-
