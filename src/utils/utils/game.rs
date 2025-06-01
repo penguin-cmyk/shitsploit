@@ -6,19 +6,19 @@ use crate::utils::utils::utils::Utils;
 use crate::utils::types::Vector3::*;
 use crate::utils::types::Player::*;
 use crate::utils::offsets::offsets::offsets;
-
+use crate::process;
 
 pub struct Game<'a> {
-    pub process: &'a Process,
-    pub utils: &'a Utils<'a>,
+    pub process: Process,
+    pub utils: &'a Utils,
     pub datamodel: usize,
 }
 
 #[allow(dead_code)]
 
 impl<'a> Game<'a> {
-    pub fn get_datamodel() -> (Process, usize , usize) {
-        let roblox_prc = Process::new(Process::pid("RobloxPlayerBeta.exe").unwrap());
+    pub fn get_datamodel() -> (usize , usize) {
+        let roblox_prc = process.clone();
         let base_address = roblox_prc.get_base_address().unwrap() as usize;
 
         let rebase = |address: usize| -> usize { base_address + address };
@@ -27,17 +27,17 @@ impl<'a> Game<'a> {
         let fake_dm = roblox_prc.read_memory::<usize>(fake_dm_pointer).unwrap();
         if fake_dm == 0 {
             println!("Failed to get the fake datamodel");
-            return (roblox_prc, 0, base_address)
+            return (0, base_address)
         }
 
         let real_dm = roblox_prc.read_memory::<usize>(fake_dm + 0x1B8).unwrap();
 
-        (roblox_prc, real_dm, base_address)
+        (real_dm, base_address)
     }
 
-    pub fn new(process: &'a Process, utils: &'a Utils, datamodel: usize) -> Self {
+    pub fn new(utils: &'a Utils, datamodel: usize) -> Self {
         Self {
-            process,
+            process: process.clone(),
             utils,
             datamodel ,
 

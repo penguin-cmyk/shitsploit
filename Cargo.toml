@@ -4,7 +4,7 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-memory_utils = "0.1.18"
+memory_utils = "0.1.19"
 device_query = "0.2"
 once_cell = "1.19"
 egui = "0.31.1"

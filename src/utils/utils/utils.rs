@@ -1,12 +1,15 @@
 use std::io::Error;
 use memory_utils::process::Process;
 use crate::offsets;
-pub struct Utils<'a> {
-    pub process: &'a Process,
+use crate::process as proc;
+
+pub struct Utils {
+    pub process: Process,
 }
 #[allow(dead_code)]
-impl<'a> Utils<'a> {
-    pub fn new(process: &'a Process) -> Self { Self { process } }
+impl Utils {
+    pub fn new() -> Self {
+        Self { process: proc.clone() } }
 
     pub fn read_string(&self, address: usize) -> String {
         #[allow(unused)]

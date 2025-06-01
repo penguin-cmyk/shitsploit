@@ -10,7 +10,7 @@ pub struct Player<'a> {
     pub Character: HashMap<String, usize>,
     pub CharacterAddr: usize,
     pub PlayerAddr: usize,
-    pub utils: &'a Utils<'a>,
+    pub utils: &'a Utils,
 }
 
 
@@ -28,7 +28,7 @@ impl<'a> Player<'a> {
         }
     }
 
-    pub fn default(utils: &'a Utils<'a>,) -> Self {
+    pub fn default(utils: &'a Utils,) -> Self {
         Player {
             Userid: 0,
             Username: "".to_string(),
