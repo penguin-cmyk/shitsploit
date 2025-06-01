@@ -32,7 +32,7 @@ fn new_game()   {
             let char = character.lock().unwrap().clone();
             if char == 0 { continue }
 
-            utils.walkspeed(char, 250.0);
+            utils.walkspeed(char, 70.0);
         }
     });
 

@@ -14,6 +14,3 @@ pub mod types {
 }
 
 
-pub mod luau_env {
-    pub mod luau;
-}
