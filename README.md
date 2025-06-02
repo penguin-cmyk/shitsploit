@@ -9,7 +9,7 @@ It is meant to be a **base**, not a complete external cheat.
 
 ---
 
-## 📁 Files You Should Care About
+## Files You Should Care About
 
 You primarily need to work with:
 
@@ -20,19 +20,19 @@ The main source works fine as-is, but you're free to modify it if needed.
 
 ---
 
-## 🔁 Offset Updates
+## Offset Updates
 
 No need to manually update offsets — I’ll handle that after each Roblox update, as long as I'm available.
 
 ---
 
-## ✨ Features
+## Features
 
-### ✅ Working Components
+### Working Components
 
 -  [x] Teleport handler
 
-### 🧰 Roblox Utility Library (`utils/cheat/rbx.rs`)
+### Roblox Utility Library (`utils/cheat/rbx.rs`)
 
 Provides basic Roblox API-like access:
 
@@ -50,7 +50,7 @@ Provides basic Roblox API-like access:
 
 ---
 
-## 🧩 Classes & Structs
+## Classes & Structs
 
 ### `Offsets`
 
