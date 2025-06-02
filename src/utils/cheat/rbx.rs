@@ -1,10 +1,11 @@
-use crate::classes::rbx::{ vector2::Vector2, vector3::Vector3, Quaternion };
+use crate::classes::rbx::{vector2::Vector2, vector3::Vector3, Quaternion };
 use crate::classes::cheat::Matrix4;
 use crate::classes::cheat::player::Player;
 use crate::classes::globals::globals::*;
 use crate::utils::cheat::mem;
 use crate::offsets::offsets::offsets;
 
+#[allow(dead_code)]
 pub fn world_to_screen(
     world: Vector3,
     dimensions: Vector2,
@@ -34,16 +35,14 @@ pub fn world_to_screen(
 }
 
 #[allow(non_snake_case)]
+#[allow(dead_code)]
 pub fn GetChildren(address: usize) -> Vec<usize> {
     let mut children = Vec::new();
-
-
 
     let start = process.read_memory::<usize>(address + offsets.Children).unwrap();
     let end = process.read_memory::<usize>(start + offsets.ChildrenEnd).unwrap_or(0);
     if end == 0 { return children }
     let mut current = process.read_memory::<usize>(start).unwrap();
-
 
     while current < end {
         let child = process.read_memory::<usize>(current).unwrap();
@@ -53,6 +52,7 @@ pub fn GetChildren(address: usize) -> Vec<usize> {
     children
 }
 #[allow(non_snake_case)]
+#[allow(dead_code)]
 pub fn FindFirstChild(address: usize, name_to_find: String) -> usize {
     let children = GetChildren(address);
 
@@ -63,18 +63,37 @@ pub fn FindFirstChild(address: usize, name_to_find: String) -> usize {
     0
 }
 #[allow(non_snake_case)]
+#[allow(dead_code)]
 pub fn GetService(name: String) -> usize {
-    let mut datamodel = dm.lock().unwrap();
+    let datamodel = dm.lock().unwrap();
 
     return FindFirstChild(*datamodel, name)
 }
 
 #[allow(non_snake_case)]
+#[allow(dead_code)]
+pub fn GetCameraPos() -> Vector3 {
+    let workspace = GetService("Workspace".to_string());
+    let camera = process.read_memory::<usize>(workspace + offsets.Camera).unwrap();
+
+    let camera_pos = process.read_memory::<Vector3>( camera + offsets.CameraPos ).unwrap();
+    camera_pos
+}
+
+#[allow(non_snake_case)]
+#[allow(dead_code)]
+pub fn MoveDirection(hum: usize) -> Vector3 {
+    process.read_memory::<Vector3>( hum + offsets.MoveDirection ).unwrap()
+}
+
+#[allow(non_snake_case)]
+#[allow(dead_code)]
 pub fn GetClass(address: usize) -> String {
     let class = process.read_memory::<usize>(address + offsets.ClassDescriptor).unwrap();
     mem::read_string(class)
 }
 #[allow(non_snake_case)]
+#[allow(dead_code)]
 pub fn GetLocalPlayer() -> Player {
     let players =  GetService("Players".to_string());
     let player =  process.read_memory::<usize>(players + offsets.LocalPlayer).unwrap_or(0);
@@ -83,10 +102,33 @@ pub fn GetLocalPlayer() -> Player {
     let userid = process.read_memory::<usize>( player + offsets.UserId).unwrap();
     let name = name(player);
 
-    let character = process.read_memory::<usize>( player + offsets.ModelInstance).unwrap_or(0);
-    if character == 0 { return Player::default() }
+    let character_ptr = process.read_memory::<usize>( player + offsets.ModelInstance).unwrap_or(0);
+    if character_ptr == 0 { return Player::default() }
 
-    Player { name, userid, character, player }
+    Player { name, userid, character: character_ptr, player }
+}
+
+#[allow(non_snake_case)]
+#[allow(dead_code)]
+pub fn GetPlayers() -> Vec<Player> {
+    let players = GetService("Players".to_string());
+    let children = GetChildren(players);
+
+    let mut players = Vec::<Player>::new();
+
+    for player in children {
+        let name = name(player);
+        let userid = process.read_memory::<usize>(player + offsets.UserId).unwrap_or(0);
+
+        if userid == 0 { continue }
+
+        let character_ptr = process.read_memory::<usize>(player + offsets.ModelInstance).unwrap_or(0);
+        if character_ptr == 0 { continue }
+
+        players.push(Player { name, userid, character: character_ptr, player });
+    };
+
+    players
 }
 
 pub fn name(address: usize) -> String {

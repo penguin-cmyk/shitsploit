@@ -2,17 +2,18 @@ use crate::classes::globals::globals::*;
 
 #[allow(dead_code)]
 fn string(address: usize) -> String {
-    let mut character = 0;
+    #[allow(unused_assignments)]
+    let mut character_ptr = 0;
     let mut offset = 0;
 
     let mut result = Vec::new();
 
     while offset < 400 {
-        character = process.read_memory::<u8>(address + offset).unwrap_or(0);
-        if character == 0 { break }
+        character_ptr = process.read_memory::<u8>(address + offset).unwrap_or(0);
+        if character_ptr == 0 { break }
 
         offset += 1;
-        result.push(String::from_utf8_lossy(&[character]).to_string());
+        result.push(String::from_utf8_lossy(&[character_ptr]).to_string());
     };
 
     result.join("")

@@ -72,3 +72,15 @@ impl Sub<f32> for Vector3 {
         }
     }
 }
+
+impl Sub<Vector3> for Vector3 {
+    type Output = Vector3;
+
+    fn sub(self, rhs: Vector3) -> Self::Output {
+        Vector3 {
+            x: self.x - rhs.x,
+            y: self.y - rhs.y,
+            z: self.z - rhs.z,
+        }
+    }
+}
