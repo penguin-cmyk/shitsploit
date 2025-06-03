@@ -50,10 +50,8 @@ fn main() {
             continue
         }
 
-        {
-            let entry_l = entry_loaded.lock().unwrap();
-            if *entry_l { continue }
-        }
+        { let entry_l = entry_loaded.lock().unwrap();if *entry_l { continue } }
+        { let mut entry = entry_loaded.lock().unwrap(); *entry = true }
 
         std::thread::spawn(move || { entry() });
     }

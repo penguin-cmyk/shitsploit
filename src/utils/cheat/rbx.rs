@@ -62,12 +62,25 @@ pub fn FindFirstChild(address: usize, name_to_find: String) -> usize {
     }
     0
 }
+
+#[allow(non_snake_case)]
+#[allow(dead_code)]
+pub fn FindFirstClass(address: usize, class: String) -> usize {
+    let children = GetChildren(address);
+
+    for child in children {
+        let child_name = GetClass(child);
+        if class == child_name { return child }
+    }
+    0
+}
+
 #[allow(non_snake_case)]
 #[allow(dead_code)]
 pub fn GetService(name: String) -> usize {
     let datamodel = dm.lock().unwrap();
 
-    return FindFirstChild(*datamodel, name)
+    return FindFirstClass(*datamodel, name)
 }
 
 #[allow(non_snake_case)]
@@ -89,8 +102,10 @@ pub fn MoveDirection(hum: usize) -> Vector3 {
 #[allow(non_snake_case)]
 #[allow(dead_code)]
 pub fn GetClass(address: usize) -> String {
-    let class = process.read_memory::<usize>(address + offsets.ClassDescriptor).unwrap();
-    mem::read_string(class)
+    let class = process.read_memory::<usize>(address + offsets.ClassDescriptor).unwrap_or(0);
+    if class == 0 { return "".to_string() }
+
+    mem::read_string(class, true)
 }
 #[allow(non_snake_case)]
 #[allow(dead_code)]
@@ -134,7 +149,7 @@ pub fn GetPlayers() -> Vec<Player> {
 pub fn name(address: usize) -> String {
     let address = process.read_memory::<usize>(address + offsets.Name).unwrap_or(0);
     if address == 0 { return String::new() }
-    mem::read_string(address)
+    mem::read_string(address, false)
 }
 
 pub fn datamodel() -> (usize, usize) {

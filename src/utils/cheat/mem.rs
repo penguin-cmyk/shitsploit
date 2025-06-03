@@ -19,8 +19,10 @@ fn string(address: usize) -> String {
     result.join("")
 }
 
-pub fn read_string(address: usize) -> String {
+pub fn read_string(mut address: usize, class: bool) -> String {
     let length = process.read_memory::<usize>(address + 0x10).unwrap_or(0);
+
+    if class { address += 0x8 }
 
     if length >= 16 { string(process.read_memory::<usize>(address).unwrap_or(0)) }
     else { string(address) }
