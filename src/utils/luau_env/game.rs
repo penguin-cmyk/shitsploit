@@ -22,6 +22,13 @@ fn find_first_class(lua: &Lua) -> Function {
     }).unwrap()
 }
 
+fn get_name(lua: &Lua) -> Function {
+    lua.create_function(| _, address: Number | {
+        let address = address as usize;
+        Ok(rbx::name(address))
+    }).unwrap()
+}
+
 fn get_service(lua: &Lua) -> Function {
     lua.create_function(| _, class: LuaString | {
         let class = class.to_string_lossy().to_string();
