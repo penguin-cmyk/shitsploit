@@ -71,6 +71,7 @@ pub fn register(lua: &Lua) {
     game.set("GetService", get_service(lua)).unwrap();
     game.set("LocalPlayer", localplayer(lua)).unwrap();
     game.set("GetPlayers", getplayers(lua)).unwrap();
+    game.set("GetName", get_name(lua)).unwrap();
 
     globals.set("game", game).unwrap();
 }
