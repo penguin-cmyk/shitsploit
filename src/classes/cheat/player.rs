@@ -4,7 +4,7 @@ use crate::offsets::offsets::*;
 use crate::utils::cheat::rbx;
 
 #[allow(dead_code)]
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct Player {
     pub name: String,
     pub userid: usize,
@@ -39,6 +39,15 @@ impl Player {
         drop(hum);
     }
 
+    pub fn move_direction(&self) -> Vector3 {
+        if self.character == 0 { return Vector3::zero() }
+
+        let hum = humanoid.lock().unwrap();
+        if *hum == 0 { return Vector3::zero() }
+
+        rbx::MoveDirection(*hum)
+    }
+
     pub fn team(&self) -> usize {
         process.read_memory::<usize>(self.player + offsets.Team).unwrap()
     }
@@ -52,13 +61,31 @@ impl Player {
         process.read_memory::<Vector3>(primitive + offsets.Position).unwrap()
     }
 
-    pub fn set_position(&mut self, part: &str, position: Vector3) {
+    pub fn set_position(&self, part: &str, position: Vector3) {
         if self.character == 0 { return }
         let part = rbx::FindFirstChild(self.character, part.to_string());
         if part == 0 { return }
 
         let primitive = self.primitive(part);
         process.write_memory::<Vector3>(primitive + offsets.Position, &position).unwrap()
+    }
+
+    pub fn get_velocity(&self, part: &str) -> Vector3 {
+        if self.character == 0 { return Vector3::zero() }
+        let part = rbx::FindFirstChild(self.character, part.to_string());
+        if part == 0 { return Vector3::zero() }
+
+        let primitive = self.primitive(part);
+        process.read_memory::<Vector3>(primitive + offsets.Velocity).unwrap()
+    }
+
+    pub fn set_velocity(&self, part: &str, position: Vector3) {
+        if self.character == 0 { return }
+        let part = rbx::FindFirstChild(self.character, part.to_string());
+        if part == 0 { return }
+
+        let primitive = self.primitive(part);
+        process.write_memory::<Vector3>(primitive + offsets.Velocity, &position).unwrap()
     }
 
 }

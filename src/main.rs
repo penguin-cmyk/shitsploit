@@ -8,8 +8,8 @@ use utils::cheat::rbx;
 use entry::entry::entry;
 use classes::globals::globals::*;
 use offsets::offsets::*;
-
 fn main() {
+
     let (real_dm, fake_dm) = rbx::datamodel();
     println!("FDm->RDm: {:#X} -> {:#X}", fake_dm, real_dm);
 
@@ -50,8 +50,11 @@ fn main() {
             continue
         }
 
-        { let entry_l = entry_loaded.lock().unwrap();if *entry_l { continue } }
-        { let mut entry = entry_loaded.lock().unwrap(); *entry = true }
+        {
+            let mut entry_l = entry_loaded.lock().unwrap();
+            if *entry_l { continue }
+            *entry_l = true
+        }
 
         std::thread::spawn(move || { entry() });
     }
