@@ -33,6 +33,7 @@ No need to manually update offsets — I’ll handle that after each Roblox upda
 ### Working Components
 
 -  [x] Teleport handler
+-  [x] Basic luau env
 
 ### Roblox Utility Library (`utils/cheat/rbx.rs`)
 
