@@ -68,6 +68,8 @@ Represents a Roblox player instance with several utility methods:
 - `.health` – Get current health
 - `.set_health` – Set health value
 - `.get_position` – Get current position (Vector3)
+- `.get_velocity` – Get current velocity (Vector3)
+- `.set_velocity` – Changes the players to velocity
 - `.set_position` – Teleport player to a position
 - `.team` – Get the team of the player
 - `.primitive` – Method to retrieve the primitive of a parts address
